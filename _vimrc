@@ -68,7 +68,7 @@ set tabstop=4
 set softtabstop=4     
 set shiftwidth=4     
 set expandtab       
-set mouse=a 		"设置在任何模式下鼠标都可用
+set mouse= 		"设置在任何模式下鼠标都(bu)可用
 set nobackup 		"设置不生成备份文件
 "set go=				"不要图形按钮
 set guioptions-=T           " 隐藏工具栏
@@ -120,28 +120,43 @@ let NERDTreeShowBookmarks=1
 
 
 
+
 set rnu
 call plug#begin('D:/vim/vim82/plugged')
 " Plug 'soft-aesthetic/soft-era-vim'
 " Plug 'connorholyday/vim-snazzy'
 " Plug 'tomasr/molokai'
+" color-scheme
 Plug 'vim-airline/vim-airline'
 Plug 'preservim/nerdtree'
 Plug 'ycm-core/YouCompleteMe'
 Plug 'dense-analysis/ale'
-Plug 'ctrlpvim/ctrlp.vim'
-" Plug 'junegunn/fzf'
-" Plug 'justinmk/vim-sneak'
+Plug 'justinmk/vim-sneak'
 Plug 'tpope/vim-surround'
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-commentary'
 Plug 'terryma/vim-multiple-cursors'
+Plug 'godlygeek/tabular'
+Plug 'plasticboy/vim-markdown'
+" Plug 'luochen1990/rainbow'
+
+" Plug 'ctrlpvim/ctrlp.vim'
+" Plug 'tacahiroy/ctrlp-funky'
+
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
+
+
+" Plug 'junegunn/fzf'
+" powerful utilities
+
 " Plug 'majutsushi/tagbar'
 call plug#end()
 
-color desert
 
-let g:SnazzyTransparent = 1
+" let g:SnazzyTransparent = 1
+
+color desert
 let mapleader="\<space>"
 set clipboard=unnamed
 set nu
@@ -159,27 +174,54 @@ nnoremap <right>  <C-w>>
 noremap <leader>j <C-w>j 
 noremap <leader>k <C-w>k
 noremap <leader>l <C-w>l
-"nnoremap <leader>ff :TagbarToggle<CR>
-
-noremap <Caps_Lock>:source $MYVIMRC<CR>
 nnoremap <leader>rv :source $MYVIMRC<CR>
 nnoremap <leader>ev :e $MYVIMRC<CR>
-inoremap jj <ESC>
+nnoremap <leader>gd :GitGutterToggle<CR>
+nnoremap <leader>hl :nohls<CR>
+"nnoremap <leader>ff :TagbarToggle<CR>
+" inoremap jj <ESC>
+" this is not used anymore I changed registersheet to implement this function
+
 let g:sneak#s_next = 1
 let g:gitgutter_terminal_reports=0
-nnoremap <leader>gd :GitGutterToggle<CR>
 
-let g:ctrlp_map = '<leader>p'
-let g:ctrlp_cmd = 'CtrlP'
-map <leader>f :CtrlPMRU<CR>
-let g:ctrlp_custom_ignore = {
-    \ 'dir':  '\v[\/]\.(git|hg|svn|rvm)$',
-    \ 'file': '\v\.(exe|so|dll|zip|tar|tar.gz|pyc)$',
-    \ }
-let g:ctrlp_working_path_mode=0
-let g:ctrlp_match_window_bottom=1
-let g:ctrlp_max_height=15
-let g:ctrlp_match_window_reversed=0
-let g:ctrlp_mruf_max=500
-let g:ctrlp_follow_symlinks=1
-nnoremap <C-p> :CtrlP<CR>
+" let g:ctrlp_map = '<leader>p'
+" let g:ctrlp_cmd = 'CtrlP'
+" map <leader>f :CtrlPMRU<CR>
+" let g:ctrlp_custom_ignore = {
+"     \ 'dir':  '\v[\/]\.(git|hg|svn|rvm)$',
+"     \ 'file': '\v\.(exe|so|dll|zip|tar|tar.gz|pyc)$',
+"     \ }
+" let g:ctrlp_working_path_mode=0
+" let g:ctrlp_match_window_bottom=1
+" let g:ctrlp_max_height=15
+" let g:ctrlp_match_window_reversed=0
+" let g:ctrlp_mruf_max=500
+" let g:ctrlp_follow_symlinks=1
+" nnoremap <C-p> :CtrlP<CR>
+" nnoremap <Leader>fu :CtrlPFunky<Cr>
+" " narrow the list down with a word under cursor
+" nnoremap <Leader>fU :execute 'CtrlPFunky ' . expand('<cword>')<Cr>
+
+"<Leader>f在当前目录搜索文件
+nnoremap <silent> <Leader>f :Files<CR>
+"<Leader>bBuffer中的文件
+nnoremap <silent> <Leader>b :Buffers<CR>
+"<Leader>p在当前所有加载的Buffer中搜索包含目标词的所有行，:BLines只在当前Buffer中搜索
+nnoremap <silent> <Leader>p :Lines<CR>
+"<Leader>h在Vim打开的历史文件中搜索，相当于是在MRU中搜索，:History：命令历史查找
+" nnoremap <silent> <Leader>h :History<CR>
+"调用Rg进行搜索，包含隐藏文件
+"command! -bang -nargs=* Rg
+\ call fzf#vim#grep(
+\   'rg --column --line-number --no-heading --color=always --smart-case --hidden '.shellescape(<q-args>), 1,
+\   <bang>0 ? fzf#vim#with_preview('up:60%')
+\           : fzf#vim#with_preview('right:50%:hidden', '?'),
+\   <bang>0)
+
+" let g:rainbow_active = 1   
+set spell
+set cursorline
+nnoremap <leader>fl :simalt ~x<CR>
+" nnoremap <ESC> <tab>
+" nnoremap <tab> <ESC> 
