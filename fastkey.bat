@@ -1,1 +1,0 @@
-@doskey nv= nvim-qt $*
