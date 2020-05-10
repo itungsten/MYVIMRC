@@ -35,6 +35,7 @@ source C:/Users/tungsten/AppData/Local/nvim/md-snippets.vim
 " ===
 set nocompatible "取消与vi的兼容，减少bug，提高功能
 filetype on
+filetype plugin on
 filetype plugin indent on "文件类型识别，是很多相应插件工作的基础
 
 
@@ -146,6 +147,8 @@ Plug 'altercation/vim-colors-solarized'
 Plug 'morhetz/gruvbox'
 " Plug 'tomasr/molokai'
 
+" Plug 'vim-latex/vim-latex'
+Plug 'lervag/vimtex'
 Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
 Plug 'tpope/vim-fugitive'
 Plug 'mhinz/vim-startify'
@@ -172,14 +175,23 @@ Plug 'mbbill/undotree'
 " Plug 'vim-scripts/fcitx.vim'
 call plug#end()
 
-
 " ===
 " === 键盘映射
 " ===
 let mapleader="\<space>"
 
+" nnoremap <leader>v :set invlist<cr>
+
+" ''special mark to go between
+" '. special mark to go last change
+" g;
+" g,
+nnoremap <leader>' viW<esc>a"<esc>hbi"<esc>lel
+nnoremap / /\v
 nnoremap <leader>ch :update<Bar>silent !start chrome %:p<CR>
 
+nnoremap <leader>yy ggVGy<C-o>
+noremap ; o<esc>
 noremap <leader>w :w<CR>
 noremap Q :q!<CR>
 noremap <C-q> :qa!<CR>
@@ -192,6 +204,7 @@ nnoremap <leader>l <C-w>l
 
 nnoremap <C-j> 5j
 nnoremap <C-k> 5k
+
 nnoremap <C-h> 5h
 nnoremap <C-l> 5l
 
@@ -214,7 +227,9 @@ nnoremap <leader>oo :TagbarToggle<CR>
 nnoremap <leader>nn :NERDTreeToggle<CR>
 nnoremap <leader>uu :UndotreeToggle<CR>
 
-autocmd Filetype vim nnoremap <buffer> <leader>up :source $MYVIMRC<CR>
+nnoremap <leader>a gg=G''
+autocmd BufWritePre,BufRead *.cpp normal gg=G
+autocmd Filetype vim nnoremap <buffer> <leader>re :source %<CR>
 autocmd Filetype markdown nnoremap <buffer> <leader>md :MarkdownPreview<CR>
 nnoremap <leader>et :e $MYVIMRC<CR>
 
@@ -227,7 +242,8 @@ nnoremap <silent> H 0
 nnoremap <silent> L $
 
 vnoremap <silent> H 0
-vnoremap <silent> L $
+vnoremap <silent> L g_
+"g_ will not select the carriage return char
 
 nnoremap < <<
 nnoremap > >>
@@ -243,19 +259,21 @@ nnoremap <leader>fl :simalt ~x<CR>
 nnoremap <leader>rn :set rnu!<CR>
 "nnoremap <LEADER>st :Startify<CR>
 
-nnoremap <silent> <Leader>f :Files<CR>
-nnoremap <silent> <Leader>b :Buffers<CR>
-nnoremap <silent> <Leader>L :Lines<CR>
-nnoremap <silent> <Leader>i :BLines<CR>
+" nnoremap <silent> <Leader>f :Files<CR>
+" nnoremap <silent> <Leader>b :Buffers<CR>
+" nnoremap <silent> <Leader>L :Lines<CR>
+" nnoremap <silent> <Leader>i :BLines<CR>
 
 nnoremap <leader>ep : ALEPrevious<CR>
 nnoremap <leader>en : ALENext<CR>
 nnoremap <Leader>ei : ALEDetail<CR>
 
-inoremap .. <++>
+inoremap `1 <++>
 nnoremap <leader><leader> <Esc>/<++><CR>:nohls<CR>c4l
 " inoremap <leader><leader> <Esc>/<++><CR>:nohls<CR>c4l
 
+nnoremap <leader>ss :%s/
+ 
 
             " ===
             " === 插件配置
@@ -387,7 +405,7 @@ highlight Normal guibg=NONE ctermbg=None
 " ===
 " === 字体
 " ===
-set guifont=Monospace:h14
+set guifont=Monospace:h16
 " set guifo宋体:16
 " set guifont=Arial_monospaced_for_SAP:h9:cANSI
 " set guifont=Bitstream_Vera_Sans_Mono:h10:cANSI
@@ -452,7 +470,30 @@ let g:mkdp_markdown_css = ''
 let g:mkdp_highlight_css = ''
 let g:mkdp_port = ''
 let g:mkdp_page_title = '「${name}」'
-autocmd BufRead,BufNewFile *.md setlocal spell
+autocmd BufRead,BufNewFile *.md *.tex setlocal spell
+autocmd BufLeave *.tex VimtexClean
+" ===
+" === latex
+" ===
+" let g:vimtex_view_method=''
+let g:vimtex_quickfix_mode=0
+let g:vimtex_enabled=1
+let g:tex_flavor='latex'
+set conceallevel=1
+let g:tex_conceal='abdmg'
+" let g:vimtex_view_general_viewer = 'mupdf'
+let g:vimtex_view_general_viewer = 'Sumatra'
+let g:vimtex_view_general_options_latexmk = '-reuse-instance'
+let g:vimtex_view_general_options
+\ = '-reuse-instance -forward-search @tex @line @pdf'
+\ . ' -inverse-search "' . exepath(v:progpath)
+\ . ' --servername ' . v:servername
+\ . ' --remote-send \"^<C-\^>^<C-n^>'
+\ . ':execute ''drop '' . fnameescape(''\%f'')^<CR^>'
+\ . ':\%l^<CR^>:normal\! zzzv^<CR^>'
+\ . ':call remote_foreground('''.v:servername.''')^<CR^>^<CR^>\""'
+
+" <localleader>lt  vimtex-toc-toggle
 
 
 " ===
@@ -494,3 +535,21 @@ set viewoptions=cursor,folds,slash,unix "config mkview for dump and restore
 "<C-a> number+1 // in neovim ,all is selected
 "zc zo zm zr zM zR zi
 "set report=0
+
+" ===
+" === Functions
+" ===
+
+
+" ===
+" === Abb
+" ===
+iabb mmail 1019205908@qq.com
+    
+
+" Vimscript file settings ---------------------- {{{
+augroup filetype_vim
+    autocmd!
+    autocmd FileType vim setlocal foldmethod=marker
+augroup END
+" }}}
